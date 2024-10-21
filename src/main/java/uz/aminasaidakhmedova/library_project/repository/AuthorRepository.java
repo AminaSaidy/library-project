@@ -1,4 +1,8 @@
 package uz.aminasaidakhmedova.library_project.repository;
 
-public interface AuthorRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+import uz.aminasaidakhmedova.library_project.model.Author;
+
+public interface AuthorRepository extends JpaRepository<Author, Long>{
+
 }
