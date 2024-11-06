@@ -28,14 +28,10 @@ public class GenreServiceImpl implements GenreService {
 
         List<BookDto> bookDtoList = genre.getBooks().stream()
                 .map(book -> BookDto.builder()
-                        .genre(book.getGenre().getName())
-                        .name(book.getName())
-                        .id(book.getId())
                         .authors(book.getAuthors().stream()
                                 .map(author -> AuthorDto.builder()
-                                        .id(author.getId()) // Assuming AuthorDto has id
-                                        .name(author.getName()) // Assuming AuthorDto has name
-                                        .surname(author.getSurname()) // Assuming AuthorDto has surname
+                                        .name(author.getName())
+                                        .surname(author.getSurname())
                                         .build())
                                 .collect(Collectors.toList()))
                         .build())

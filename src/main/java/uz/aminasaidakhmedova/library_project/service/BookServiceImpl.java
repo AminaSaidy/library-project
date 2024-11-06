@@ -7,9 +7,13 @@ import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import uz.aminasaidakhmedova.library_project.dto.AuthorDto;
 import uz.aminasaidakhmedova.library_project.dto.BookDto;
 import uz.aminasaidakhmedova.library_project.model.Book;
 import uz.aminasaidakhmedova.library_project.repository.BookRepository;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -41,10 +45,18 @@ public class BookServiceImpl implements BookService {
     }
 
     private BookDto convertEntityToDto(Book book) {
+        List<AuthorDto> authorDtoList = book.getAuthors().stream()
+                .map(author -> AuthorDto.builder()
+                        .name(author.getName())
+                        .surname(author.getSurname())
+                        .build())
+                .collect(Collectors.toList());
+
         return BookDto.builder()
                 .id(book.getId())
                 .genre(book.getGenre().getName())
                 .name(book.getName())
+                .authors(authorDtoList)
                 .build();
     }
 }
