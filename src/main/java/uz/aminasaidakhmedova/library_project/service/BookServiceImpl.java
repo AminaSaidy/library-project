@@ -8,17 +8,26 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import uz.aminasaidakhmedova.library_project.dto.AuthorDto;
+import uz.aminasaidakhmedova.library_project.dto.BookCreateDto;
 import uz.aminasaidakhmedova.library_project.dto.BookDto;
+import uz.aminasaidakhmedova.library_project.dto.BookUpdateDto;
+import uz.aminasaidakhmedova.library_project.model.Author;
 import uz.aminasaidakhmedova.library_project.model.Book;
+import uz.aminasaidakhmedova.library_project.model.Genre;
+import uz.aminasaidakhmedova.library_project.repository.AuthorRepository;
 import uz.aminasaidakhmedova.library_project.repository.BookRepository;
+import uz.aminasaidakhmedova.library_project.repository.GenreRepository;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
+    private final GenreRepository genreRepository;
+    private final AuthorRepository authorRepository;
 
     @Override
     public BookDto getByNameV1(String name) {
@@ -42,6 +51,42 @@ public class BookServiceImpl implements BookService {
         });
         Book book = bookRepository.findOne(specification).orElseThrow();
         return convertEntityToDto(book);
+    }
+
+    @Override
+    public BookDto createBook(BookCreateDto bookCreateDto){
+        Book book = bookRepository.save(convertDtoToEntity(bookCreateDto));
+        BookDto bookDto = convertEntityToDto(book);
+        return bookDto;
+    }
+
+    @Override
+    public BookDto updateBook(BookUpdateDto bookUpdateDto){
+        Book book = bookRepository.findById(bookUpdateDto.getId()).orElseThrow();
+        book.setName(bookUpdateDto.getName());
+        Book savedBook = bookRepository.save(book);
+        BookDto bookDto = convertEntityToDto(book);
+        return bookDto;
+    }
+
+    @Override
+    public void deleteBook(Long id){
+        bookRepository.deleteById(id);
+    }
+
+    private Book convertDtoToEntity(BookCreateDto bookCreateDto){
+        Genre genre = genreRepository.findById(bookCreateDto.getGenreId())
+                .orElseThrow(() -> new RuntimeException("Genre not found"));
+
+        Set<Author> authors = bookCreateDto.getAuthorIds().stream()
+                .map(id -> authorRepository.findById(id).orElseThrow(() -> new RuntimeException("Author not found")))
+                .collect(Collectors.toSet());
+
+        return Book.builder()
+                .name(bookCreateDto.getName())
+                .genre(genre)
+                .authors(authors)
+                .build();
     }
 
     private BookDto convertEntityToDto(Book book) {
