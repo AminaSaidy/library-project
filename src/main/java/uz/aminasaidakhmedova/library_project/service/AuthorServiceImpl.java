@@ -14,6 +14,7 @@ import uz.aminasaidakhmedova.library_project.dto.BookDto;
 import uz.aminasaidakhmedova.library_project.model.Author;
 import uz.aminasaidakhmedova.library_project.repository.AuthorRepository;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -73,6 +74,12 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     public void deleteAuthor(Long id){
         authorRepository.deleteById(id);
+    }
+
+    @Override
+    public List<AuthorDto> getAllAuthors() {
+        List<Author> author = authorRepository.findAll();
+        return author.stream().map(this::convertEntityToDto).collect(Collectors.toList());
     }
 
     private Author convertDtoToEntity(AuthorCreateDto authorCreateDto) {

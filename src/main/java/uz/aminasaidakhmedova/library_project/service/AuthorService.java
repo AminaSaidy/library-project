@@ -3,6 +3,9 @@ package uz.aminasaidakhmedova.library_project.service;
 import uz.aminasaidakhmedova.library_project.dto.AuthorCreateDto;
 import uz.aminasaidakhmedova.library_project.dto.AuthorDto;
 import uz.aminasaidakhmedova.library_project.dto.AuthorUpdateDto;
+import uz.aminasaidakhmedova.library_project.model.Author;
+
+import java.util.List;
 
 public interface AuthorService {
     AuthorDto getAuthorById(Long id);
@@ -12,4 +15,5 @@ public interface AuthorService {
     AuthorDto createAuthor(AuthorCreateDto authorCreateDto);
     AuthorDto updateAuthor(AuthorUpdateDto authorUpdateDto);
     void deleteAuthor(Long id);
+    List<AuthorDto> getAllAuthors();
 }
