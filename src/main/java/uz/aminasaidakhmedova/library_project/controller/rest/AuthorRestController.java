@@ -1,4 +1,4 @@
-package uz.aminasaidakhmedova.library_project.controller;
+package uz.aminasaidakhmedova.library_project.controller.rest;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -9,7 +9,7 @@ import uz.aminasaidakhmedova.library_project.service.AuthorService;
 
 @RestController
 @RequiredArgsConstructor
-public class AuthorController {
+public class AuthorRestController {
     private final AuthorService authorService;
 
     @GetMapping("/author/{id}")
