@@ -59,4 +59,15 @@
 
         </sql>
     </changeSet>
+
+    <changeSet id="2" author="Amina">
+        <sql>
+            Create table if not exists users (
+            id bigserial PRIMARY KEY,
+            username varchar NOT NULL UNIQUE,
+            password varchar NOT NULL,
+            role varchar NOT NULL
+            );
+        </sql>
+    </changeSet>
 </databaseChangeLog>
