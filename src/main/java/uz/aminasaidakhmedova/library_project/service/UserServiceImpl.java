@@ -1,6 +1,7 @@
 package uz.aminasaidakhmedova.library_project.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import uz.aminasaidakhmedova.library_project.dto.UserCreateDto;
 import uz.aminasaidakhmedova.library_project.dto.UserDto;
@@ -24,9 +25,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getUserByUsername(String username) {
-        User user = userRepository.findByUsername(username).orElseThrow();
-        return convertEntityToDto(user);
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
     @Override
