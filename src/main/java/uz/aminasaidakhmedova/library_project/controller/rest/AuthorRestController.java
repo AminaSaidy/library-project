@@ -1,5 +1,6 @@
 package uz.aminasaidakhmedova.library_project.controller.rest;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import uz.aminasaidakhmedova.library_project.dto.AuthorCreateDto;
@@ -33,7 +34,7 @@ public class AuthorRestController {
     }
 
     @PostMapping("/author/create")
-    AuthorDto createAuthor(@RequestBody AuthorCreateDto authorCreateDto){
+    AuthorDto createAuthor(@RequestBody @Valid AuthorCreateDto authorCreateDto){
         return authorService.createAuthor(authorCreateDto);
     }
 
