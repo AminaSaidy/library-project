@@ -13,7 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
-public class AuthorRestControllerRest {
+public class AuthorRestControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
