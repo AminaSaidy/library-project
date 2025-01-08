@@ -5,6 +5,7 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import uz.aminasaidakhmedova.library_project.dto.AuthorDto;
@@ -19,11 +20,13 @@ import uz.aminasaidakhmedova.library_project.repository.BookRepository;
 import uz.aminasaidakhmedova.library_project.repository.GenreRepository;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final GenreRepository genreRepository;
@@ -31,55 +34,84 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookDto getByNameV1(String name) {
-        Book book = bookRepository.findBookByName(name).orElseThrow();
-        return convertEntityToDto(book);
+        log.info("Try to find book by name {}", name);
+        Book book = bookRepository.findBookByName(name).orElseThrow(() -> {
+            log.error("Book with name {} not found", name);
+            return new NoSuchElementException("Book not found");
+        });
+        BookDto bookDto = convertEntityToDto(book);
+        log.info("Found book: {}", bookDto);
+        return bookDto;
     }
 
     @Override
     public BookDto getByNameV2(String name) {
-        Book book = bookRepository.findBookByNameBySql(name).orElseThrow();
-        return convertEntityToDto(book);
+        log.info("Try to find book by name (SQL) {}", name);
+        Book book = bookRepository.findBookByNameBySql(name).orElseThrow(() -> {
+            log.error("Book with name {} not found", name);
+            return new NoSuchElementException("Book not found");
+        });
+        BookDto bookDto = convertEntityToDto(book);
+        log.info("Found book: {}", bookDto);
+        return bookDto;
     }
 
     @Override
     public BookDto getByNameV3(String name) {
-        Specification<Book> specification = Specification.where(new Specification<Book>() {
-            @Override
-            public Predicate toPredicate(Root<Book> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-                return criteriaBuilder.equal(root.get("name"), name);
-            }
+        log.info("Try to find book by name (Specification) {}", name);
+        Specification<Book> specification = Specification.where((root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("name"), name));
+        Book book = bookRepository.findOne(specification).orElseThrow(() -> {
+            log.error("Book with name {} not found", name);
+            return new NoSuchElementException("Book not found");
         });
-        Book book = bookRepository.findOne(specification).orElseThrow();
-        return convertEntityToDto(book);
+        BookDto bookDto = convertEntityToDto(book);
+        log.info("Found book: {}", bookDto);
+        return bookDto;
     }
 
     @Override
-    public BookDto createBook(BookCreateDto bookCreateDto){
+    public BookDto createBook(BookCreateDto bookCreateDto) {
+        log.info("Creating book with data: {}", bookCreateDto);
         Book book = bookRepository.save(convertDtoToEntity(bookCreateDto));
         BookDto bookDto = convertEntityToDto(book);
+        log.info("Created book: {}", bookDto);
         return bookDto;
     }
 
     @Override
-    public BookDto updateBook(BookUpdateDto bookUpdateDto){
-        Book book = bookRepository.findById(bookUpdateDto.getId()).orElseThrow();
+    public BookDto updateBook(BookUpdateDto bookUpdateDto) {
+        log.info("Updating book with id {}", bookUpdateDto.getId());
+        Book book = bookRepository.findById(bookUpdateDto.getId()).orElseThrow(() -> {
+            log.error("Book with id {} not found", bookUpdateDto.getId());
+            return new NoSuchElementException("Book not found");
+        });
         book.setName(bookUpdateDto.getName());
         Book savedBook = bookRepository.save(book);
-        BookDto bookDto = convertEntityToDto(book);
+        BookDto bookDto = convertEntityToDto(savedBook);
+        log.info("Updated book: {}", bookDto);
         return bookDto;
     }
 
     @Override
-    public void deleteBook(Long id){
+    public void deleteBook(Long id) {
+        log.info("Deleting book with id {}", id);
+        if (!bookRepository.existsById(id)) {
+            log.error("Book with id {} not found", id);
+            throw new NoSuchElementException("Book not found");
+        }
         bookRepository.deleteById(id);
+        log.info("Deleted book with id {}", id);
     }
 
     @Override
     public List<BookDto> getAllBooks() {
+        log.info("Fetching all books");
         List<Book> books = bookRepository.findAll();
-        return books.stream().map(this::convertEntityToDto).collect(Collectors.toList());
+        List<BookDto> bookDtos = books.stream().map(this::convertEntityToDto).collect(Collectors.toList());
+        log.info("Fetched {} books", bookDtos.size());
+        return bookDtos;
     }
-
     private Book convertDtoToEntity(BookCreateDto bookCreateDto){
         Genre genre = genreRepository.findById(bookCreateDto.getGenreId())
                 .orElseThrow(() -> new RuntimeException("Genre not found"));
