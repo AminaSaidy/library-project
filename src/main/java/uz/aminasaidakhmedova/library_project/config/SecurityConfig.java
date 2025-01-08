@@ -5,10 +5,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import uz.aminasaidakhmedova.library_project.model.User;
-import uz.aminasaidakhmedova.library_project.service.UserService;
+//import uz.aminasaidakhmedova.library_project.model.User;
+//import uz.aminasaidakhmedova.library_project.service.UserService;
+import org.springframework.security.core.userdetails.User;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -16,7 +19,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final UserService userService;
+//    private final UserService userService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -34,16 +37,19 @@ public class SecurityConfig {
     }
 
     @Bean
-    public UserDetailsService userDetailsService() {
-        return username -> {
-            User user = userService.getUserByUsername(username);
-            return org.springframework.security.core.userdetails.User
-                    .builder()
-                    .username(user.getUsername())
-                    .password(user.getPassword())
-                    .roles(user.getRole())
-                    .build();
-        };
+    public UserDetailsService users(){
+        User.UserBuilder users = User.withDefaultPasswordEncoder();
+        UserDetails user = users
+                .username("user")
+                .password("password")
+                .roles("USER")
+                .build();
+        UserDetails admin = users
+                .username("admin")
+                .password("password")
+                .roles("ADMIN")
+                .build();
+        return new InMemoryUserDetailsManager(user, admin);
     }
 }
 

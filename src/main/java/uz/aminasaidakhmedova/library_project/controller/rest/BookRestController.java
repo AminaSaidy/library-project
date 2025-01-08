@@ -1,5 +1,6 @@
 package uz.aminasaidakhmedova.library_project.controller.rest;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import uz.aminasaidakhmedova.library_project.dto.BookCreateDto;
@@ -9,6 +10,7 @@ import uz.aminasaidakhmedova.library_project.service.BookService;
 
 @RestController
 @RequiredArgsConstructor
+@SecurityRequirement(name = "library-users")
 public class BookRestController {
     private final BookService bookService;
 

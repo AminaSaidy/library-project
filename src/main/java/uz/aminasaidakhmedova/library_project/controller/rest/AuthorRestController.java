@@ -1,5 +1,6 @@
 package uz.aminasaidakhmedova.library_project.controller.rest;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +11,7 @@ import uz.aminasaidakhmedova.library_project.service.AuthorService;
 
 @RestController
 @RequiredArgsConstructor
+@SecurityRequirement(name = "library-users")
 public class AuthorRestController {
     private final AuthorService authorService;
 
