@@ -19,9 +19,7 @@ import uz.aminasaidakhmedova.library_project.repository.AuthorRepository;
 import uz.aminasaidakhmedova.library_project.repository.BookRepository;
 import uz.aminasaidakhmedova.library_project.repository.GenreRepository;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -112,12 +110,16 @@ public class BookServiceImpl implements BookService {
         log.info("Fetched {} books", bookDtos.size());
         return bookDtos;
     }
+
     private Book convertDtoToEntity(BookCreateDto bookCreateDto){
         Genre genre = genreRepository.findById(bookCreateDto.getGenreId())
                 .orElseThrow(() -> new RuntimeException("Genre not found"));
 
-        Set<Author> authors = bookCreateDto.getAuthorIds().stream()
-                .map(id -> authorRepository.findById(id).orElseThrow(() -> new RuntimeException("Author not found")))
+        Set<Author> authors = Optional.ofNullable(bookCreateDto.getAuthorIds())
+                .orElse(Collections.emptyList()) // If authorIds is null, use an empty list
+                .stream()
+                .map(id -> authorRepository.findById(id)
+                        .orElseThrow(() -> new RuntimeException("Author not found")))
                 .collect(Collectors.toSet());
 
         return Book.builder()

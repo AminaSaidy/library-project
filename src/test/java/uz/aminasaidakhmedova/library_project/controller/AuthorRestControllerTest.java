@@ -71,8 +71,8 @@ public class AuthorRestControllerTest {
     public void testUpdateAuthor() throws Exception {
         AuthorUpdateDto authorUpdateDto = new AuthorUpdateDto();
         authorUpdateDto.setId(1L);
-        authorUpdateDto.setName("\u0410\u043B\u0435\u043A\u0441\u0435\u0439");
-        authorUpdateDto.setSurname("\u0422\u043E\u043B\u0441\u0442\u043E\u0439");
+        authorUpdateDto.setName("Александр");
+        authorUpdateDto.setSurname("Пушкин");
 
         mockMvc.perform(MockMvcRequestBuilders.put("/author/update")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -82,12 +82,4 @@ public class AuthorRestControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(authorUpdateDto.getName()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.surname").value(authorUpdateDto.getSurname()));
     }
-
-//    @Test
-//    public void testDeleteAuthor() throws Exception {
-//        Long id = 1L;
-//
-//        mockMvc.perform(MockMvcRequestBuilders.delete("/author/delete/{id}", id))
-//                .andExpect(status().isOk());
-//    }
 }
