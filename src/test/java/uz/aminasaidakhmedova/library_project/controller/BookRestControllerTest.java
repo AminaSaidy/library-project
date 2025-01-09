@@ -49,20 +49,6 @@ public class BookRestControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.genre").value(bookDto.getGenre()));
     }
 
-//    @Test
-//    public void testCreateBook() throws Exception {
-//        BookCreateDto bookCreateDto = new BookCreateDto();
-//        bookCreateDto.setName("Book name");
-//        bookCreateDto.setGenreId(1L);
-//
-//        mockMvc.perform(MockMvcRequestBuilders.post("/book/create")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(new ObjectMapper().writeValueAsString(bookCreateDto)))
-//                .andExpect(status().isOk())
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(bookCreateDto.getName()))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.genreId").value(bookCreateDto.getGenreId()));
-//    }
-
     @Test
     public void testDeleteBook() throws Exception {
         Long id = 1L;
