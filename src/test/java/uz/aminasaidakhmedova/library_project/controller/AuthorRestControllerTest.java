@@ -32,4 +32,11 @@ public class AuthorRestControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(authorDto.getName()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.surname").value(authorDto.getSurname()));
     }
+
+    @Test
+    public void testGetAuthorByName() {
+
+    }
+
+
 }
